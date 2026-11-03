@@ -8,7 +8,7 @@ export const APP_DESCRIPTION = 'Make and read QR codes for links, text, WiFi and
 
 // Bump on every deploy: it names the service-worker cache, which drives the
 // "new version ready" prompt.
-export const APP_VERSION = '1.0.0';
+export const APP_VERSION = '1.0.1';
 
 // Production origin (Cloudflare Pages custom domain).
 export const ORIGIN = 'https://qrcode.bernardlawes.com';
