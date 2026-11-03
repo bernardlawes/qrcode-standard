@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Admin · Tesserae QR</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <script type="module" src="/admin/admin.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" data-app-name>Tesserae QR</a>
+    <nav><a href="/admin/">Admin</a><a href="/generate">Generate</a><a href="/scan">Scan</a></nav>
+  </header>
+  <main>
+    <section class="panel">
+      <h1>Profile codes <span class="muted small">— local only, never deployed</span></h1>
+      <p>Pick your <code>private/profile.json</code>. It is read in this browser tab only and is not uploaded or stored.
+        Edit the file and pick it again to regenerate. Publish only the exported images.</p>
+      <label class="field">
+        <span class="label">profile.json</span>
+        <input type="file" id="profile-file" accept="application/json,.json">
+      </label>
+      <label class="field">
+        <span class="label">Error correction</span>
+        <select id="ecc"></select>
+      </label>
+      <p id="profile-error" class="error" role="alert" hidden></p>
+    </section>
+    <div id="codes" class="codes-grid"></div>
+  </main>
+</body>
+</html>

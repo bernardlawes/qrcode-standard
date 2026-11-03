@@ -1,0 +1,19 @@
+{
+  "contact": {
+    "name": { "given": "Alex", "family": "Example" },
+    "formattedName": "Alex Example",
+    "org": "Example Co",
+    "title": "Engineer",
+    "phones": [{ "type": "CELL", "value": "+1 555 0100" }],
+    "emails": [{ "type": "INTERNET", "value": "alex@example.com" }],
+    "urls": ["https://example.com"],
+    "addresses": [
+      { "type": "WORK", "street": "1 Main St", "locality": "Springfield", "region": "IL", "postalCode": "62701", "country": "USA" }
+    ],
+    "note": "Met at the conference"
+  },
+  "wifi": [
+    { "ssid": "Example Home", "security": "WPA", "password": "change-me-please", "hidden": false },
+    { "ssid": "Example Guest", "security": "nopass" }
+  ]
+}
