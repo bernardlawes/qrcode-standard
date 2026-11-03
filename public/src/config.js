@@ -10,8 +10,8 @@ export const APP_DESCRIPTION = 'Make and read QR codes for links, text, WiFi and
 // "new version ready" prompt.
 export const APP_VERSION = '1.0.0';
 
-// Production origin. Not deployed yet; set this when the site gets its address.
-export const ORIGIN = '';
+// Production origin (Cloudflare Pages custom domain).
+export const ORIGIN = 'https://qrcode.bernardlawes.com';
 
 export const THEME_COLOR = '#1f4e79';
 export const BACKGROUND_COLOR = '#ffffff';

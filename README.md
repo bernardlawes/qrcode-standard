@@ -49,7 +49,7 @@ To update a code, edit the file and regenerate. Data access goes through the `Pr
 
 ## Deploying (Cloudflare Pages)
 
-Not deployed yet. When it is, give it its own address and set `ORIGIN` in `config.js`.
+Live at **https://qrcode.bernardlawes.com** (`ORIGIN` in `config.js`), from the Cloudflare Pages project `qrcode-standard`.
 
 1. Create a Pages project connected to this repo, or deploy from the CLI with `npx wrangler pages deploy public --project-name qrcode-standard`.
    - **Build command:** none.
