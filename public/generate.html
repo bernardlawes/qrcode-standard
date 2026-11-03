@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Generate · Tesserae QR</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#1f4e79">
+  <script type="module" src="/src/ui/generate.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" data-app-name>Tesserae QR</a>
+    <nav><a href="/generate">Generate</a><a href="/scan">Scan</a></nav>
+  </header>
+  <main class="layout-2">
+    <section class="panel">
+      <h1>Create a QR code</h1>
+      <div id="type-picker" class="chips" role="group" aria-label="Payload type"></div>
+      <form id="form" autocomplete="off" novalidate></form>
+      <label class="field floating">
+        <select id="ecc"></select>
+        <span class="label">Error correction</span>
+        <small>Higher levels survive more damage but make the code denser.</small>
+      </label>
+    </section>
+    <section class="panel" id="preview" aria-live="polite"></section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,1 @@
+const e=e=>("object"==typeof e?"|No data|Bad version range|Bad error correction range|Too much data|Data cannot be encoded using requested modes|Bad framework|Bad generate function|Bad toSvgDataURL function".split("|")[e.code]||e.message:`${e}`)||"Unknown error";export{e as readError};

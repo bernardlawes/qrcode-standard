@@ -1,0 +1,23 @@
+# Cloudflare Pages headers. Also applied by tools/dev-server.mjs locally.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' blob: data:; media-src 'self' blob:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; require-trusted-types-for 'script'; trusted-types sw-url
+  Permissions-Policy: camera=(self), microphone=(), geolocation=(), payment=(), usb=()
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  Cross-Origin-Opener-Policy: same-origin
+  Strict-Transport-Security: max-age=31536000
+
+/sw.js
+  Cache-Control: no-cache
+
+/*.html
+  Cache-Control: no-cache
+
+/
+  Cache-Control: no-cache
+
+/generate
+  Cache-Control: no-cache
+
+/scan
+  Cache-Control: no-cache

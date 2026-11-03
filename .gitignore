@@ -1,0 +1,5 @@
+node_modules/
+# Personal data: NEVER commit or deploy.
+private/
+# Generated QR images from tools/codes.mjs
+out/

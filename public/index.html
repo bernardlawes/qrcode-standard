@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tesserae QR</title>
+  <meta name="description" content="Make and read QR codes for links, text, WiFi and contacts, offline.">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#1f4e79">
+  <script type="module" src="/src/ui/home.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" data-app-name>Tesserae QR</a>
+    <nav><a href="/generate">Generate</a><a href="/scan">Scan</a></nav>
+  </header>
+  <main class="home panel">
+    <h1 data-app-name>Tesserae QR</h1>
+    <p class="lead">Generate and read QR codes offline. Share data without a network connection.</p>
+    <div class="home-cards">
+      <a class="card-link" href="/generate">
+        <strong>Generate</strong>
+        <span>Export as PNG or SVG.</span>
+      </a>
+      <a class="card-link" href="/scan">
+        <strong>Scan</strong>
+        <span>Decoded on your device.</span>
+      </a>
+    </div>
+    <figure class="home-qr">
+      <img src="/img/website.svg" width="240" height="240" alt="QR code linking to bernardlawes.com">
+      <figcaption>bernardlawes.com</figcaption>
+    </figure>
+  </main>
+</body>
+</html>
