@@ -44,25 +44,26 @@ export function replace(node, ...children) {
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 
-/** Copy text to the clipboard, with a short-lived tick (or cross) on the button. */
+/** Copy text to the clipboard, with short-lived feedback on the button: words, or a tick or cross on an icon button. */
 export async function copyText(text, button) {
   try {
     await navigator.clipboard.writeText(text);
-    if (button) flash(button, '\u2713', 'Copied');
+    if (button) flash(button, button.querySelector('svg') ? '\u2713' : 'Copied', 'Copied');
   } catch {
-    if (button) flash(button, '\u2715', 'Copy failed');
+    if (button) flash(button, button.querySelector('svg') ? '\u2715' : 'Copy failed', 'Copy failed');
   }
 }
 
-function flash(button, symbol, label) {
+function flash(button, content, label) {
   const original = [...button.childNodes]; // may be an icon, not just text
   const originalLabel = button.getAttribute('aria-label');
-  button.textContent = symbol;
+  button.textContent = content;
   button.setAttribute('aria-label', label);
   button.disabled = true;
   setTimeout(() => {
     button.replaceChildren(...original);
-    button.setAttribute('aria-label', originalLabel);
+    if (originalLabel === null) button.removeAttribute('aria-label');
+    else button.setAttribute('aria-label', originalLabel);
     button.disabled = false;
   }, 1200);
 }

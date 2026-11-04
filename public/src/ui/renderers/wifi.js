@@ -1,6 +1,6 @@
 // WiFi: display only — the reader never joins networks.
 import { el } from '../dom.js';
-import { copyButton, magnifierIcon, row } from './common.js';
+import { copyIconButton, magnifierIcon, row } from './common.js';
 
 const SECURITY_LABEL = { nopass: 'None (open network)', WPA: 'WPA/WPA2/WPA3', WEP: 'WEP (insecure)' };
 
@@ -9,7 +9,7 @@ const strip = (...buttons) => el('span', { class: 'chips value-strip' }, ...butt
 
 export function render({ ssid, security, password, hidden }) {
   const dl = el('dl', { class: 'details' },
-    row('Network', el('span', { class: 'value-row' }, el('strong', { text: ssid }), strip(copyButton(ssid, 'Copy network name')))),
+    row('Network', el('span', { class: 'value-row' }, el('strong', { text: ssid }), strip(copyIconButton(ssid, 'Copy network name')))),
     row('Security', SECURITY_LABEL[security] ?? security),
     row('Hidden', hidden ? 'Yes' : 'No'));
 
@@ -25,7 +25,7 @@ export function render({ ssid, security, password, hidden }) {
       toggle.title = label;
       value.textContent = show ? password : masked;
     });
-    dl.append(row('Password', el('span', { class: 'value-row' }, value, strip(toggle, copyButton(password, 'Copy password')))));
+    dl.append(row('Password', el('span', { class: 'value-row' }, value, strip(toggle, copyIconButton(password, 'Copy password')))));
   }
 
   return { body: dl, actions: [] };
