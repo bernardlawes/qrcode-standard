@@ -28,8 +28,15 @@ export const magnifierIcon = () => icon([
   ['path', { d: 'M15.5 15.5 21 21' }],
 ]);
 
-/** A strip segment. The label is for screen readers and the hover tooltip. */
-export function copyButton(text, label = 'Copy') {
+/** A "Copy" segment for the Scan page's action strip. */
+export function copyButton(text) {
+  const b = el('button', { type: 'button', class: 'chip', text: 'Copy' });
+  b.addEventListener('click', () => copyText(text, b));
+  return b;
+}
+
+/** A copy icon for a button inline with its value. The label is for screen readers and the tooltip. */
+export function copyIconButton(text, label) {
   const b = el('button', { type: 'button', class: 'chip', 'aria-label': label, title: label }, copyIcon());
   b.addEventListener('click', () => copyText(text, b));
   return b;
