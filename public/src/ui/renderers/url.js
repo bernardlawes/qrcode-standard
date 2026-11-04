@@ -16,7 +16,7 @@ export function render({ url }) {
   if (u.protocol === 'http:') parts.push(el('p', { class: 'muted small', text: 'Not encrypted (http).' }));
 
   const open = el('button', {
-    type: 'button', class: 'chip', text: 'Open Link',
+    type: 'button', class: 'chip', text: 'Open',
     on: {
       click: async () => {
         const ok = await confirmDialog({
