@@ -41,7 +41,7 @@ function codeImage(payload) {
 
 async function showResult(payload) {
   const r = await decode(payload);
-  const title = `Type: ${TYPE_TITLES[r.type] ?? r.type}`;
+  const title = TYPE_TITLES[r.type] ?? r.type;
   const { body, actions } = r.ok
     ? RENDERERS[r.type](r.data)
     : {
