@@ -6,7 +6,7 @@ const SECURITY_LABEL = { nopass: 'None (open network)', WPA: 'WPA/WPA2/WPA3', WE
 
 export function render({ ssid, security, password, hidden }) {
   const dl = el('dl', { class: 'details' },
-    row('Network', el('strong', { text: ssid })),
+    row('Network', el('span', { class: 'secret-row' }, el('strong', { text: ssid }), copyButton(ssid, { class: 'secondary small', 'aria-label': 'Copy network name' }))),
     row('Security', SECURITY_LABEL[security] ?? security),
     row('Hidden', hidden ? 'Yes' : 'No'));
 
@@ -20,11 +20,8 @@ export function render({ ssid, security, password, hidden }) {
       toggle.textContent = show ? 'Hide' : 'Reveal';
       value.textContent = show ? password : masked;
     });
-    dl.append(row('Password', el('span', { class: 'secret-row' }, value, toggle)));
+    dl.append(row('Password', el('span', { class: 'secret-row' }, value, toggle, copyButton(password, { class: 'secondary small', 'aria-label': 'Copy password' }))));
   }
 
-  return el('div', {}, dl,
-    el('div', { class: 'actions' },
-      copyButton(ssid, 'Copy network name'),
-      security !== 'nopass' ? copyButton(password, 'Copy password') : null));
+  return { body: dl, actions: [] };
 }

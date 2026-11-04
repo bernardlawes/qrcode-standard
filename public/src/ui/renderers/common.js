@@ -1,8 +1,9 @@
 // Shared bits for result renderers.
 import { el, copyText } from '../dom.js';
 
-export function copyButton(text, label = 'Copy') {
-  const b = el('button', { type: 'button', class: 'secondary', text: label });
+/** A strip segment by default; pass the attributes for a button elsewhere. */
+export function copyButton(text, attrs = { class: 'chip' }) {
+  const b = el('button', { type: 'button', text: 'Copy', ...attrs });
   b.addEventListener('click', () => copyText(text, b));
   return b;
 }

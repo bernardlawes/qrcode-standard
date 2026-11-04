@@ -35,7 +35,7 @@ Free, public, offline QR generator & reader PWA for the standard types (URL, tex
 - Detection order is the array order in `public/src/core/registry.js`:
   `reserved (QC/QD/QE codes from the full app)` → `vcard` → `wifi` → `url` → `text`.
 - `reserved` recognises full-app codes (`QD1:` Data, `QC1:` compressed Data, `QE1:` encrypted, and later versions). The reader says to open them in the full app; it never decodes or shows their contents.
-- UI rendering lives separately in `public/src/ui/renderers/<id>.js` keyed by the same `id`.
+- UI rendering lives separately in `public/src/ui/renderers/<id>.js` keyed by the same `id`. Registered renderers return `{ body, actions }`; the Scan page puts `actions` in its connected button strip.
 - Adding a type: core module + register in `registry.js` + renderer + generator form + round-trip tests.
 - Standard types (URL, text, WiFi, vCard 3.0) are encoded raw with **no prefix** so native phone cameras can read them. This app has no custom types.
 

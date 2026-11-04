@@ -203,8 +203,12 @@ pre.payload, pre.raw {
 }
 #scan-status.error { background: var(--error-bg); color: var(--error-text); padding: .6rem .75rem; border-radius: var(--radius-sm); }
 .result:focus { outline: none; }
-.result-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin: 0 0 1rem; }
-.badge { background: var(--accent-strong); color: var(--text); border-radius: 999px; padding: .2rem .75rem; font-size: .85rem; font-weight: 600; }
+.result-head { margin: 0 0 1rem; }
+.type-label { display: inline-block; padding: .4rem .8rem; font-weight: 600; font-size: .9rem; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.result-qr { max-width: 260px; margin: 0 auto 1rem; }
+.result-strip { margin: 1rem 0 0; }
+.result-strip .chip { min-height: 44px; padding: .4rem .25rem; color: var(--text); font-weight: 600; white-space: normal; line-height: 1.15; }
+@media (max-width: 400px) { .result-strip .chip { font-size: .85rem; } }
 dl.details { margin: 0; }
 .kv { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: .5rem; padding: .45rem 0; border-bottom: 1px solid var(--border); }
 .kv dt { color: var(--muted); }
