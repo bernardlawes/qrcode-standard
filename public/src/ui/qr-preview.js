@@ -10,8 +10,8 @@ export function createQrPreview(root, { title } = {}) {
   const info = el('p', { class: 'qr-info' });
   const warn = el('p', { class: 'warning', hidden: true });
   const error = el('p', { class: 'error', role: 'alert', hidden: true });
-  const pngBtn = el('button', { type: 'button', text: 'Download PNG' });
-  const svgBtn = el('button', { type: 'button', class: 'secondary', text: 'Download SVG' });
+  const pngBtn = el('button', { type: 'button', class: 'chip', text: 'Download PNG' });
+  const svgBtn = el('button', { type: 'button', class: 'chip', text: 'Download SVG' });
   const payloadText = el('pre', { class: 'payload' });
   const payloadBox = el('details', { class: 'payload-box' }, el('summary', { text: 'Show encoded payload' }), payloadText);
 
@@ -28,7 +28,7 @@ export function createQrPreview(root, { title } = {}) {
     title ? el('h3', { text: title }) : null,
     el('div', { class: 'qr-frame' }, canvas),
     info, warn, error,
-    el('div', { class: 'actions' }, pngBtn, svgBtn),
+    el('div', { class: 'chips result-strip preview-strip', role: 'group', 'aria-label': 'Download' }, pngBtn, svgBtn),
     payloadBox);
 
   function setEnabled(on) {
