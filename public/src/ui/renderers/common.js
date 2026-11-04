@@ -1,9 +1,27 @@
 // Shared bits for result renderers.
 import { el, copyText } from '../dom.js';
 
-/** A strip segment by default; pass the attributes for a button elsewhere. */
-export function copyButton(text, attrs = { class: 'chip' }) {
-  const b = el('button', { type: 'button', text: 'Copy', ...attrs });
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/** Two overlapping rounded sheets. Drawn in the text colour, so it follows the theme. */
+function copyIcon() {
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('class', 'icon');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  const shape = (name, attrs) => {
+    const node = document.createElementNS(SVG_NS, name);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    svg.append(node);
+  };
+  shape('rect', { x: 9, y: 3, width: 12, height: 15, rx: 3 });
+  shape('path', { d: 'M5 7v11a4 4 0 0 0 4 4h8' });
+  return svg;
+}
+
+/** A strip segment. The label is for screen readers and the hover tooltip. */
+export function copyButton(text, label = 'Copy') {
+  const b = el('button', { type: 'button', class: 'chip', 'aria-label': label, title: label }, copyIcon());
   b.addEventListener('click', () => copyText(text, b));
   return b;
 }

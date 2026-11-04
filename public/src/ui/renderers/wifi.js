@@ -9,21 +9,23 @@ const strip = (...buttons) => el('span', { class: 'chips value-strip' }, ...butt
 
 export function render({ ssid, security, password, hidden }) {
   const dl = el('dl', { class: 'details' },
-    row('Network', el('span', { class: 'value-row' }, el('strong', { text: ssid }), strip(copyButton(ssid, { class: 'chip', 'aria-label': 'Copy network name' })))),
+    row('Network', el('span', { class: 'value-row' }, el('strong', { text: ssid }), strip(copyButton(ssid, 'Copy network name')))),
     row('Security', SECURITY_LABEL[security] ?? security),
     row('Hidden', hidden ? 'Yes' : 'No'));
 
   if (security !== 'nopass') {
     const masked = '•'.repeat(Math.min(Math.max(password.length, 8), 24));
     const value = el('code', { class: 'secret', text: masked });
-    const toggle = el('button', { type: 'button', class: 'chip', text: 'Reveal', 'aria-pressed': 'false' });
+    const toggle = el('button', { type: 'button', class: 'chip', text: '\u{1F50D}', 'aria-label': 'Reveal password', title: 'Reveal password', 'aria-pressed': 'false' });
     toggle.addEventListener('click', () => {
       const show = toggle.getAttribute('aria-pressed') !== 'true';
       toggle.setAttribute('aria-pressed', String(show));
-      toggle.textContent = show ? 'Hide' : 'Reveal';
+      const label = show ? 'Hide password' : 'Reveal password';
+      toggle.setAttribute('aria-label', label);
+      toggle.title = label;
       value.textContent = show ? password : masked;
     });
-    dl.append(row('Password', el('span', { class: 'value-row' }, value, strip(toggle, copyButton(password, { class: 'chip', 'aria-label': 'Copy password' })))));
+    dl.append(row('Password', el('span', { class: 'value-row' }, value, strip(toggle, copyButton(password, 'Copy password')))));
   }
 
   return { body: dl, actions: [] };

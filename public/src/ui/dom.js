@@ -44,21 +44,27 @@ export function replace(node, ...children) {
 
 export const $ = (sel, root = document) => root.querySelector(sel);
 
-/** Copy text to the clipboard, with a short-lived "Copied" label on the button. */
+/** Copy text to the clipboard, with a short-lived tick (or cross) on the button. */
 export async function copyText(text, button) {
   try {
     await navigator.clipboard.writeText(text);
-    if (button) flash(button, 'Copied');
+    if (button) flash(button, '\u2713', 'Copied');
   } catch {
-    if (button) flash(button, 'Copy failed');
+    if (button) flash(button, '\u2715', 'Copy failed');
   }
 }
 
-function flash(button, label) {
-  const original = button.textContent;
-  button.textContent = label;
+function flash(button, symbol, label) {
+  const original = [...button.childNodes]; // may be an icon, not just text
+  const originalLabel = button.getAttribute('aria-label');
+  button.textContent = symbol;
+  button.setAttribute('aria-label', label);
   button.disabled = true;
-  setTimeout(() => { button.textContent = original; button.disabled = false; }, 1200);
+  setTimeout(() => {
+    button.replaceChildren(...original);
+    button.setAttribute('aria-label', originalLabel);
+    button.disabled = false;
+  }, 1200);
 }
 
 /** Trigger a download of a Blob without leaving a dangling object URL. */
