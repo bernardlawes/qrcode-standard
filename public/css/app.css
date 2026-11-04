@@ -215,7 +215,12 @@ dl.details { margin: 0; }
 .kv dd { margin: 0; overflow-wrap: anywhere; }
 ul.plain { list-style: none; margin: 0; padding: 0; }
 .pre-line { white-space: pre-line; }
-.secret-row { display: inline-flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.value-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.value-row > :first-child { min-width: 0; overflow-wrap: anywhere; }
+.value-strip { flex: 1 1 5rem; margin: 0; }
+.value-strip:has(> :nth-child(2)) { flex-basis: 7rem; }
+.value-strip .chip { padding: .4rem .25rem; color: var(--text); font-size: .9rem; font-weight: 600; }
+@media (max-width: 480px) { .kv { grid-template-columns: 5rem minmax(0, 1fr); } }
 code.secret { font-size: 1rem; overflow-wrap: anywhere; }
 .url-host { font-size: 1.25rem; margin: 0 0 .5rem; overflow-wrap: anywhere; }
 .url-full { font-family: ui-monospace, Consolas, monospace; overflow-wrap: anywhere; background: var(--bg); padding: .5rem .75rem; border-radius: var(--radius-sm); }
