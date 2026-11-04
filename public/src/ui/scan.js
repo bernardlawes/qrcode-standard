@@ -3,6 +3,7 @@ import './shell.js';
 import { el, $, replace } from './dom.js';
 import { decode } from '../core/codec.js';
 import { decodeImage } from '../qr/scan.js';
+import { CapacityError, DEFAULT_ECC, makeQr } from '../qr/render.js';
 import { startCamera, CameraUnavailableError } from './camera.js';
 import { RENDERERS, TYPE_TITLES } from './renderers/index.js';
 
@@ -24,19 +25,38 @@ function setStatus(message, kind = '') {
   status.hidden = !message;
 }
 
+/** The received code, redrawn from its contents so every source looks the same. */
+function codeImage(payload) {
+  for (const ecc of [DEFAULT_ECC, 'L']) {
+    try {
+      const canvas = el('canvas', { class: 'qr-canvas', role: 'img', 'aria-label': 'The scanned QR code' });
+      makeQr(payload, ecc).code.toCanvas(canvas, { pad: 4 });
+      return el('div', { class: 'qr-frame result-qr' }, canvas);
+    } catch (e) {
+      if (!(e instanceof CapacityError)) throw e;
+    }
+  }
+  return null;
+}
+
 async function showResult(payload) {
   const r = await decode(payload);
-  const title = TYPE_TITLES[r.type] ?? r.type;
-  const body = r.ok
+  const title = `Type: ${TYPE_TITLES[r.type] ?? r.type}`;
+  const { body, actions } = r.ok
     ? RENDERERS[r.type](r.data)
-    : el('div', {},
-      el('p', { class: 'error', text: r.error }),
-      el('details', {}, el('summary', { text: 'Show raw content' }), el('pre', { class: 'raw', text: payload })));
+    : {
+      actions: [],
+      body: el('div', {},
+        el('p', { class: 'error', text: r.error }),
+        el('details', {}, el('summary', { text: 'Show raw content' }), el('pre', { class: 'raw', text: payload }))),
+    };
   replace(result,
-    el('div', { class: 'result-head' },
-      el('span', { class: 'badge', text: title }),
-      el('button', { type: 'button', class: 'secondary small', text: 'Scan another', on: { click: reset } })),
-    body);
+    el('div', { class: 'result-head' }, el('span', { class: 'type-label', text: title })),
+    codeImage(payload),
+    body,
+    el('div', { class: 'chips result-strip', role: 'group', 'aria-label': 'Actions' },
+      ...actions,
+      el('button', { type: 'button', class: 'chip', text: 'New', on: { click: reset } })));
   result.hidden = false;
   result.focus();
 }

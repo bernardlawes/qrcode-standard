@@ -16,7 +16,7 @@ export function render({ url }) {
   if (u.protocol === 'http:') parts.push(el('p', { class: 'muted small', text: 'Not encrypted (http).' }));
 
   const open = el('button', {
-    type: 'button', text: 'Open link…',
+    type: 'button', class: 'chip', text: 'Open Link',
     on: {
       click: async () => {
         const ok = await confirmDialog({
@@ -30,10 +30,10 @@ export function render({ url }) {
     },
   });
 
-  return el('div', {},
-    ...parts,
-    el('p', { class: 'url-full' }, highlightHost(url)),
-    el('div', { class: 'actions' }, open, copyButton(url, 'Copy URL')));
+  return {
+    body: el('div', {}, ...parts, el('p', { class: 'url-full' }, highlightHost(url))),
+    actions: [open, copyButton(url)],
+  };
 }
 
 /**
