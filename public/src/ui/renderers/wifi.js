@@ -1,6 +1,6 @@
 // WiFi: display only — the reader never joins networks.
 import { el } from '../dom.js';
-import { copyButton, row } from './common.js';
+import { copyButton, magnifierIcon, row } from './common.js';
 
 const SECURITY_LABEL = { nopass: 'None (open network)', WPA: 'WPA/WPA2/WPA3', WEP: 'WEP (insecure)' };
 
@@ -16,7 +16,7 @@ export function render({ ssid, security, password, hidden }) {
   if (security !== 'nopass') {
     const masked = '•'.repeat(Math.min(Math.max(password.length, 8), 24));
     const value = el('code', { class: 'secret', text: masked });
-    const toggle = el('button', { type: 'button', class: 'chip', text: '\u{1F50D}', 'aria-label': 'Reveal password', title: 'Reveal password', 'aria-pressed': 'false' });
+    const toggle = el('button', { type: 'button', class: 'chip', 'aria-label': 'Reveal password', title: 'Reveal password', 'aria-pressed': 'false' }, magnifierIcon());
     toggle.addEventListener('click', () => {
       const show = toggle.getAttribute('aria-pressed') !== 'true';
       toggle.setAttribute('aria-pressed', String(show));

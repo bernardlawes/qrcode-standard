@@ -3,21 +3,30 @@ import { el, copyText } from '../dom.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-/** Two overlapping rounded sheets. Drawn in the text colour, so it follows the theme. */
-function copyIcon() {
+/** An outline icon drawn in the text colour, so it follows the theme on every device. */
+function icon(shapes) {
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('class', 'icon');
   svg.setAttribute('viewBox', '0 0 24 24');
   svg.setAttribute('aria-hidden', 'true');
-  const shape = (name, attrs) => {
+  for (const [name, attrs] of shapes) {
     const node = document.createElementNS(SVG_NS, name);
     for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
     svg.append(node);
-  };
-  shape('rect', { x: 9, y: 3, width: 12, height: 15, rx: 3 });
-  shape('path', { d: 'M5 7v11a4 4 0 0 0 4 4h8' });
+  }
   return svg;
 }
+
+/** Two overlapping rounded sheets. */
+const copyIcon = () => icon([
+  ['rect', { x: 9, y: 3, width: 12, height: 15, rx: 3 }],
+  ['path', { d: 'M5 7v11a4 4 0 0 0 4 4h8' }],
+]);
+
+export const magnifierIcon = () => icon([
+  ['circle', { cx: 10.5, cy: 10.5, r: 6.5 }],
+  ['path', { d: 'M15.5 15.5 21 21' }],
+]);
 
 /** A strip segment. The label is for screen readers and the hover tooltip. */
 export function copyButton(text, label = 'Copy') {
