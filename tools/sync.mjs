@@ -1,6 +1,6 @@
 // Propagates public/src/config.js to the files that can't import it:
-// manifest.json, page <title>s / meta tags, and the service worker's
-// version + precache list.
+// manifest.json, page <title>s / meta tags, the service worker's
+// version + precache list, and robots.txt / sitemap.xml (from ORIGIN).
 //   npm run sync           write changes
 //   node tools/sync.mjs --check   exit 1 if anything is out of date (used by tests)
 import { readFile, readdir, writeFile } from 'node:fs/promises';
@@ -11,8 +11,11 @@ import * as config from '../public/src/config.js';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PUBLIC = join(root, 'public');
 
-// Never precached: host config, the SW itself, docs/licences.
-const EXCLUDE = [/^\/_headers$/, /^\/sw\.js$/, /\.md$/, /LICENSE$/];
+// Never precached: host config, the SW itself, docs/licences, crawler files.
+const EXCLUDE = [/^\/_headers$/, /^\/sw\.js$/, /\.md$/, /LICENSE$/, /^\/robots\.txt$/, /^\/sitemap\.xml$/];
+
+// Public pages listed for search engines, at their clean URLs.
+const PAGES = ['/', '/generate', '/scan'];
 
 // Cloudflare Pages serves pages at clean URLs and 308-redirects /x.html → /x
 // (and /index.html → /). Precache the URLs it actually serves.
@@ -58,6 +61,13 @@ function html(src) {
     .replace(/(<meta name="theme-color" content=")[^"]*"/, `$1${esc(config.THEME_COLOR)}"`);
 }
 
+// The app is public and meant to be found: allow everything, point to the sitemap.
+const robots = () => `User-agent: *\nAllow: /\n\nSitemap: ${config.ORIGIN}/sitemap.xml\n`;
+
+const sitemap = () => '<?xml version="1.0" encoding="UTF-8"?>\n' +
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+  PAGES.map((p) => `  <url><loc>${config.ORIGIN}${p}</loc></url>\n`).join('') + '</urlset>\n';
+
 async function serviceWorker(src) {
   // manifest.json is listed explicitly: it may not exist yet on the first sync
   const files = [...new Set([...await walk(PUBLIC), '/manifest.json'])]
@@ -76,6 +86,8 @@ export async function expectedOutputs() {
     out.set(join(PUBLIC, page), html(await readFile(join(PUBLIC, page), 'utf8')));
   }
   out.set(join(root, 'tools', 'admin', 'index.html'), html(await readFile(join(root, 'tools', 'admin', 'index.html'), 'utf8')));
+  out.set(join(PUBLIC, 'robots.txt'), robots());
+  out.set(join(PUBLIC, 'sitemap.xml'), sitemap());
   out.set(join(PUBLIC, 'sw.js'), await serviceWorker(await readFile(join(PUBLIC, 'sw.js'), 'utf8')));
   return out;
 }
