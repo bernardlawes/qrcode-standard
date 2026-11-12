@@ -54,7 +54,8 @@ export async function copyText(text, button) {
   }
 }
 
-function flash(button, content, label) {
+/** Show `content` on a button for a moment (it's disabled meanwhile), then restore it. */
+export function flash(button, content, label = content) {
   const original = [...button.childNodes]; // may be an icon, not just text
   const originalLabel = button.getAttribute('aria-label');
   button.textContent = content;

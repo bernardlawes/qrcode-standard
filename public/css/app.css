@@ -87,9 +87,29 @@ main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
 .home h1 { text-align: center; margin-bottom: var(--home-gap); }
 .lead { font-size: 1.05rem; color: var(--muted); text-align: center; margin: 0; }
 .home .chips { margin: var(--home-gap) 0; }
-.home-qr { margin: var(--home-gap) 0 0; text-align: center; }
-.home-qr img { display: block; width: min(220px, 60vw); height: auto; margin: 0 auto var(--home-gap); border-radius: var(--radius-sm); }
-.home-qr figcaption { color: var(--muted); font-size: .9rem; }
+/* Saved codes: collapsed rows that slide open one at a time. */
+.home-codes { margin-top: calc(var(--home-gap) - .5rem); }
+.code-row { border-bottom: 1px solid var(--border); }
+.code-toggle {
+  width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: .85rem .25rem; background: transparent; border: 0; border-radius: 0;
+  color: var(--text); font-weight: 500; text-align: left;
+}
+.code-toggle:hover:not(:disabled) { background: transparent; color: var(--accent); }
+.code-toggle::after {
+  content: ''; flex: none; width: .5rem; height: .5rem; margin-right: .35rem;
+  border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+  transform: translateY(-25%) rotate(45deg); transition: transform .25s ease;
+}
+.code-row.open .code-toggle::after { transform: translateY(25%) rotate(-135deg); }
+.code-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .25s ease; }
+.code-row.open .code-body { grid-template-rows: 1fr; }
+.code-inner { overflow: hidden; min-height: 0; }
+.code-inner .qr-frame { width: min(240px, 70vw); margin: .25rem auto 1rem; box-sizing: border-box; }
+.code-inner .error { margin: .25rem 0 1rem; }
+.code-note { color: var(--muted); text-align: center; margin: -.5rem 0 1rem; }
+.code-inner > .code-note:first-child { margin-top: .25rem; }
+@media (prefers-reduced-motion: reduce) { .code-body, .code-toggle::after { transition: none; } }
 
 /* ---- forms ---- */
 .field { display: flex; flex-direction: column; gap: .3rem; margin: 0 0 1rem; min-width: 0; }

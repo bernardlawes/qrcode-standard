@@ -5,13 +5,28 @@ import { forms } from './forms.js';
 import { createQrPreview } from './qr-preview.js';
 import { encode, getType } from '../core/codec.js';
 import { ECC_LEVELS, DEFAULT_ECC } from '../qr/render.js';
+import { loadCodes, saveCode, slotLabel } from '../data/home-codes.js';
+import { confirmDialog } from './renderers/common.js';
 
 const GENERATABLE = ['url', 'text', 'wifi', 'vcard'];
 
 const typePicker = $('#type-picker');
 const formRoot = $('#form');
 const eccSelect = $('#ecc');
-const preview = createQrPreview($('#preview'));
+const preview = createQrPreview($('#preview'), { save: { label: 'Save to Home', onSave: saveToHome } });
+
+// One saved code per type on the home page; replacing a different one asks first.
+async function saveToHome(payload, ecc) {
+  const label = slotLabel(typeId);
+  const existing = loadCodes()[typeId];
+  if (existing && existing.payload !== payload && !await confirmDialog({
+    title: `Replace ${label}?`,
+    body: [el('p', { text: `The home page already has a ${label} code. Replace it with this one?` })],
+    confirm: 'Replace',
+  })) return false;
+  saveCode(typeId, payload, ecc);
+  return true;
+}
 
 for (const lvl of ECC_LEVELS) {
   eccSelect.append(el('option', { value: lvl, text: { L: 'L — 7%', M: 'M — 15%', Q: 'Q — 25%', H: 'H — 30%' }[lvl], selected: lvl === DEFAULT_ECC }));
