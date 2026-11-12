@@ -53,6 +53,7 @@ function html(src) {
   return src
     .replace(/<title>(?:(.+?) · )?[^<]*<\/title>/, (_, page) => `<title>${page ? `${page} · ` : ''}${esc(config.APP_NAME)}</title>`)
     .replace(/(<[^>]*data-app-name[^>]*>)[^<]*</g, `$1${esc(config.APP_NAME)}<`)
+    .replace(/(<[^>]*data-app-short[^>]*>)[^<]*</g, `$1${esc(config.SHORT_NAME)}<`)
     .replace(/(<meta name="description" content=")[^"]*"/, `$1${esc(config.APP_DESCRIPTION)}"`)
     .replace(/(<meta name="theme-color" content=")[^"]*"/, `$1${esc(config.THEME_COLOR)}"`);
 }

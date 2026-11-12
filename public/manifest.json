@@ -1,6 +1,6 @@
 {
-  "name": "Tesserae QR",
-  "short_name": "Tesserae",
+  "name": "Sovereign QR Lite",
+  "short_name": "SQR Lite",
   "description": "Make and read QR codes for links, text, WiFi and contacts, offline.",
   "id": "/",
   "start_url": "/",

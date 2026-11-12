@@ -1,4 +1,4 @@
-# qrcode-standard
+# Sovereign QR Lite
 
 A free, offline QR code generator and reader, built as an installable web app (PWA). Everything runs on your device: nothing is uploaded, and it works without a network once loaded.
 
@@ -9,7 +9,7 @@ It makes and reads the standard QR types that any phone camera understands, enco
 - **WiFi** (`WIFI:…;;`). The password is hidden until you choose to reveal it.
 - **Contact cards** (vCard 3.0)
 
-Codes made by the full version of the app (structured Data and encrypted codes) are recognised when scanned, and the reader says to open them in the full app.
+Codes made by the full app, Sovereign QR (structured Data and encrypted codes), are recognised when scanned, and the reader says to open them in the full app.
 
 © Bernard Lawes. All rights reserved. The bundled libraries in `public/vendor/` keep their own licences.
 
@@ -44,17 +44,17 @@ To update a code, edit the file and regenerate. Data access goes through the `Pr
 ## Renaming the app
 
 1. Edit `public/src/config.js` (name, short name, description, colour).
-2. Replace the icons in `public/icons/`, or run `node tools/icons.mjs` to regenerate the placeholders.
+2. Replace the icons in `public/icons/`, or run `node tools/icons.mjs` to redraw them in `THEME_COLOR`.
 3. Run `npm run sync`. This rewrites `manifest.json`, the page titles and the service-worker precache list. The tests fail if you forget.
 
 ## Deploying (Cloudflare Pages)
 
-Live at **https://qrcode.bernardlawes.com** (`ORIGIN` in `config.js`), from the Cloudflare Pages project `qrcode-standard`.
+Live at **https://lite.sovereignqr.com** (`ORIGIN` in `config.js`), from the Cloudflare Pages project `qrcode-standard`.
 
 1. Create a Pages project connected to this repo, or deploy from the CLI with `npx wrangler pages deploy public --project-name qrcode-standard`.
    - **Build command:** none.
    - **Build output directory:** `public`.
-2. Add a custom domain in the Pages project (Custom domains → Set up). With DNS hosted elsewhere, add a CNAME for the subdomain pointing to `<project>.pages.dev`. Cloudflare provisions HTTPS, which the camera requires.
+2. Add a custom domain in the Pages project (Custom domains → Set up). `sovereignqr.com` is on Cloudflare DNS, so Cloudflare adds the record itself; with DNS hosted elsewhere, add a CNAME pointing to `<project>.pages.dev`. Cloudflare provisions HTTPS, which the camera requires.
 3. `public/_headers` sets the CSP (with Trusted Types), the Permissions-Policy (camera only), `no-referrer`, HSTS, and `no-cache` for HTML and `sw.js`.
 4. On each release:
    1. Bump `APP_VERSION` in `config.js`.

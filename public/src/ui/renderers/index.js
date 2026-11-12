@@ -11,13 +11,13 @@ const text = ({ text }) => ({ body: el('pre', { class: 'raw', text }), actions: 
 
 const vcard = (card) => ({ body: renderCard(card), actions: [] });
 
-// Data and encrypted codes come from the full version of this app.
+// Data and encrypted codes come from the full app, Sovereign QR.
 const reserved = ({ reason }) => ({ actions: [], body: el('div', { class: 'notice' },
   el('strong', { text: reason === 'encrypted' ? 'Encrypted code' : 'Data code' }),
   el('p', {
     text: reason === 'encrypted'
-      ? 'This code holds encrypted data made with the full version of this app. Open it there to read it.'
-      : 'This code holds structured data made with the full version of this app. Open it there to read it.',
+      ? 'This code holds encrypted data made with Sovereign QR. Open it there to read it.'
+      : 'This code holds structured data made with Sovereign QR. Open it there to read it.',
   })) });
 
 export const RENDERERS = { url, text, wifi, vcard, reserved };
