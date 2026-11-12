@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { stalePaths } from '../tools/sync.mjs';
-import { APP_NAME } from '../public/src/config.js';
+import { APP_NAME, ORIGIN } from '../public/src/config.js';
 
 const root = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
 
@@ -47,4 +47,14 @@ test('no innerHTML-style sinks in app code', async () => {
     const src = await readFile(join(dir, f), 'utf8');
     assert.doesNotMatch(src, /\.innerHTML|\.outerHTML|insertAdjacentHTML|document\.write|\beval\(|new Function/, f);
   }
+});
+
+test('robots.txt allows crawling and points to the sitemap; neither is precached', async () => {
+  const robots = await readFile(join(root, 'public', 'robots.txt'), 'utf8');
+  assert.match(robots, /^User-agent: \*\nAllow: \/$/m);
+  assert.ok(robots.includes(`Sitemap: ${ORIGIN}/sitemap.xml`));
+  const map = await readFile(join(root, 'public', 'sitemap.xml'), 'utf8');
+  for (const p of ['/', '/generate', '/scan']) assert.ok(map.includes(`<loc>${ORIGIN}${p}</loc>`), p);
+  const sw = await readFile(join(root, 'public', 'sw.js'), 'utf8');
+  assert.doesNotMatch(sw, /robots\.txt|sitemap\.xml/);
 });
