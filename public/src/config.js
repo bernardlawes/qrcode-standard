@@ -2,16 +2,16 @@
 // file (and the icons), then run `npm run sync` to update manifest.json,
 // page titles and the service-worker cache list.
 
-export const APP_NAME = 'Tesserae QR';
-export const SHORT_NAME = 'Tesserae';
+export const APP_NAME = 'Sovereign QR Lite';
+export const SHORT_NAME = 'SQR Lite';
 export const APP_DESCRIPTION = 'Make and read QR codes for links, text, WiFi and contacts, offline.';
 
 // Bump on every deploy: it names the service-worker cache, which drives the
 // "new version ready" prompt.
-export const APP_VERSION = '1.0.19';
+export const APP_VERSION = '1.0.20';
 
 // Production origin (Cloudflare Pages custom domain).
-export const ORIGIN = 'https://qrcode.bernardlawes.com';
+export const ORIGIN = 'https://lite.sovereignqr.com';
 
 export const THEME_COLOR = '#1f4e79';
 export const BACKGROUND_COLOR = '#ffffff';
