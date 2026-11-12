@@ -49,9 +49,9 @@ To update a code, edit the file and regenerate. Data access goes through the `Pr
 
 ## Deploying (Cloudflare Pages)
 
-Live at **https://lite.sovereignqr.com** (`ORIGIN` in `config.js`), from the Cloudflare Pages project `qrcode-standard`.
+Live at **https://lite.sovereignqr.com** (`ORIGIN` in `config.js`), from the Cloudflare Pages project `sovereignqr-lite`.
 
-1. Create a Pages project connected to this repo, or deploy from the CLI with `npx wrangler pages deploy public --project-name qrcode-standard`.
+1. Create a Pages project connected to this repo, or deploy from the CLI with `npx wrangler pages deploy public --project-name sovereignqr-lite --branch main`. New projects: `npx wrangler pages project create <name> --production-branch main --force` (without `--force`, current wrangler makes a Workers project instead).
    - **Build command:** none.
    - **Build output directory:** `public`.
 2. Add a custom domain in the Pages project (Custom domains → Set up). `sovereignqr.com` is on Cloudflare DNS, so Cloudflare adds the record itself; with DNS hosted elsewhere, add a CNAME pointing to `<project>.pages.dev`. Cloudflare provisions HTTPS, which the camera requires.
