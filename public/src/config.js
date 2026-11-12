@@ -8,10 +8,14 @@ export const APP_DESCRIPTION = 'Make and read QR codes for links, text, WiFi and
 
 // Bump on every deploy: it names the service-worker cache, which drives the
 // "new version ready" prompt.
-export const APP_VERSION = '1.0.22';
+export const APP_VERSION = '1.0.23';
 
 // Production origin (Cloudflare Pages custom domain).
 export const ORIGIN = 'https://lite.sovereignqr.com';
+
+// The home page's "This App" code: fixed in Lite (it's how free users share
+// the app). Switch to https://sovereignqr.com once the landing page is live.
+export const PROMO_URL = 'https://lite.sovereignqr.com';
 
 export const THEME_COLOR = '#1f4e79';
 export const BACKGROUND_COLOR = '#ffffff';

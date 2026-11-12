@@ -9,6 +9,8 @@ It makes and reads the standard QR types that any phone camera understands, enco
 - **WiFi** (`WIFI:…;;`). The password is hidden until you choose to reveal it.
 - **Contact cards** (vCard 3.0)
 
+Any code you build can be saved to the home page (one each for card, WiFi, text and link), where it opens with a tap. Saved codes stay in this browser on this device, WiFi password included; Clear removes them. The fifth row, This App, links to the app itself and can't be changed.
+
 Codes made by the full app, Sovereign QR (structured Data and encrypted codes), are recognised when scanned, and the reader says to open them in the full app.
 
 © Bernard Lawes. All rights reserved. The bundled libraries in `public/vendor/` keep their own licences.
