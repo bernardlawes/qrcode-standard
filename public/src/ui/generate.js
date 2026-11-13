@@ -13,15 +13,15 @@ const GENERATABLE = ['url', 'text', 'wifi', 'vcard'];
 const typePicker = $('#type-picker');
 const formRoot = $('#form');
 const eccSelect = $('#ecc');
-const preview = createQrPreview($('#preview'), { save: { label: 'Save to Home', onSave: saveToHome } });
+const preview = createQrPreview($('#preview'), { save: { label: 'Wallet', ariaLabel: 'Save to Wallet', onSave: saveToWallet } });
 
-// One saved code per type on the home page; replacing a different one asks first.
-async function saveToHome(payload, ecc) {
+// The Wallet (home page) keeps one code per type; replacing a different one asks first.
+async function saveToWallet(payload, ecc) {
   const label = slotLabel(typeId);
   const existing = loadCodes()[typeId];
   if (existing && existing.payload !== payload && !await confirmDialog({
     title: `Replace ${label}?`,
-    body: [el('p', { text: `The home page already has a ${label} code. Replace it with this one?` })],
+    body: [el('p', { text: `Your Wallet already has a ${label} code. Replace it with this one?` })],
     confirm: 'Replace',
   })) return false;
   saveCode(typeId, payload, ecc);

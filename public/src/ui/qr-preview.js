@@ -1,12 +1,13 @@
 // QR preview panel: canvas, size/version info, density warning, PNG/SVG export,
 // and optionally a Save button. Shared by the generator page and the local admin page.
 import { el, replace, download, flash } from './dom.js';
+import { downloadIcon } from './renderers/common.js';
 import { makeQr, toSvg, toPngBlob, CapacityError } from '../qr/render.js';
 import { byteLength } from '../core/codec.js';
 import { DENSE_WARN_BYTES } from '../config.js';
 
 /**
- * @param {{ title?: string, save?: { label: string, onSave: (payload: string, ecc: string) => Promise<boolean> } }} opts
+ * @param {{ title?: string, save?: { label: string, ariaLabel?: string, onSave: (payload: string, ecc: string) => Promise<boolean> } }} opts
  *   save: adds a button to the strip; onSave resolves true once saved, false if the user backed out.
  */
 export function createQrPreview(root, { title, save } = {}) {
@@ -14,12 +15,12 @@ export function createQrPreview(root, { title, save } = {}) {
   const info = el('p', { class: 'qr-info' });
   const warn = el('p', { class: 'warning', hidden: true });
   const error = el('p', { class: 'error', role: 'alert', hidden: true });
-  const pngBtn = el('button', { type: 'button', class: 'chip', text: 'Download PNG' });
-  const svgBtn = el('button', { type: 'button', class: 'chip', text: 'Download SVG' });
+  const pngBtn = el('button', { type: 'button', class: 'chip', 'aria-label': 'Download PNG' }, downloadIcon(), ' PNG');
+  const svgBtn = el('button', { type: 'button', class: 'chip', 'aria-label': 'Download SVG' }, downloadIcon(), ' SVG');
   const payloadText = el('pre', { class: 'payload' });
   const payloadBox = el('details', { class: 'payload-box' }, el('summary', { text: 'Show encoded payload' }), payloadText);
 
-  const saveBtn = save ? el('button', { type: 'button', class: 'chip', text: save.label }) : null;
+  const saveBtn = save ? el('button', { type: 'button', class: 'chip', 'aria-label': save.ariaLabel, text: save.label }) : null;
 
   let current = null; // { code, name, payload, ecc }
 
@@ -43,7 +44,7 @@ export function createQrPreview(root, { title, save } = {}) {
     title ? el('h3', { text: title }) : null,
     el('div', { class: 'qr-frame' }, canvas),
     info, warn, error,
-    el('div', { class: 'chips result-strip preview-strip', role: 'group', 'aria-label': 'Download' }, pngBtn, svgBtn, saveBtn),
+    el('div', { class: 'chips result-strip preview-strip', role: 'group', 'aria-label': 'Save' }, pngBtn, svgBtn, saveBtn),
     payloadBox);
 
   function setEnabled(on) {

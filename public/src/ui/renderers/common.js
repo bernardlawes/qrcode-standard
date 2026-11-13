@@ -4,7 +4,7 @@ import { el, copyText } from '../dom.js';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 /** An outline icon drawn in the text colour, so it follows the theme on every device. */
-function icon(shapes) {
+export function icon(shapes) {
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('class', 'icon');
   svg.setAttribute('viewBox', '0 0 24 24');
@@ -21,6 +21,13 @@ function icon(shapes) {
 const copyIcon = () => icon([
   ['rect', { x: 9, y: 3, width: 12, height: 15, rx: 3 }],
   ['path', { d: 'M5 7v11a4 4 0 0 0 4 4h8' }],
+]);
+
+/** Arrow down onto a tray. */
+export const downloadIcon = () => icon([
+  ['path', { d: 'M12 4v11' }],
+  ['path', { d: 'm7 10 5 5 5-5' }],
+  ['path', { d: 'M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2' }],
 ]);
 
 export const magnifierIcon = () => icon([
