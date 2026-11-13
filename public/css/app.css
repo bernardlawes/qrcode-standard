@@ -92,7 +92,6 @@ main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
 .home h1 { text-align: center; margin-bottom: var(--home-gap); }
 /* Tagline: quieter than the header name and the rows. */
 .lead { font-size: .95rem; font-weight: 400; color: var(--muted); text-align: center; margin: 0; }
-.lead-sub { font-size: .8rem; color: var(--muted); opacity: .75; text-align: center; margin: .25rem 0 0; }
 .home .chips { margin: var(--home-gap) 0; }
 /* Saved codes: collapsed rows that slide open one at a time. */
 .home-codes { margin-top: calc(var(--home-gap) - .5rem); }
