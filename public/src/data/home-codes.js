@@ -1,4 +1,4 @@
-// Codes the user saved to the home page: one per type, kept on this device
+// The Wallet: codes the user saved to the home page, one per type, kept on this device
 // (localStorage). Only the payload text and error-correction level are kept;
 // the home page redraws the code from them.
 // No DOM: tested in Node with a stand-in storage.
@@ -7,10 +7,10 @@ const KEY = 'sqr.home-codes.v1';
 
 /** Home page rows for saved codes, in display order. */
 export const SLOTS = [
-  { type: 'vcard', label: 'My Card' },
-  { type: 'wifi', label: 'My WiFi' },
-  { type: 'text', label: 'My Text' },
-  { type: 'url', label: 'My URL' },
+  { type: 'vcard', label: 'Card' },
+  { type: 'wifi', label: 'WiFi' },
+  { type: 'text', label: 'Text' },
+  { type: 'url', label: 'URL' },
 ];
 
 const TYPES = new Set(SLOTS.map((s) => s.type));

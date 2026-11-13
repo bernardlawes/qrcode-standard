@@ -10,8 +10,8 @@ const memory = () => {
 };
 
 test('slots are the four standard types, in order', () => {
-  assert.deepEqual(SLOTS.map((s) => s.label), ['My Card', 'My WiFi', 'My Text', 'My URL']);
-  assert.equal(slotLabel('wifi'), 'My WiFi');
+  assert.deepEqual(SLOTS.map((s) => s.label), ['Card', 'WiFi', 'Text', 'URL']);
+  assert.equal(slotLabel('wifi'), 'WiFi');
 });
 
 test('save, replace and load codes', () => {

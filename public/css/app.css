@@ -72,6 +72,11 @@ nav { display: flex; gap: .25rem; }
 nav a { padding: .35rem .85rem; border-radius: 999px; text-decoration: none; color: var(--muted); border: 1px solid transparent; }
 nav a:hover { color: var(--text); }
 nav a[aria-current="page"] { background: var(--accent-soft); border-color: var(--accent-strong); color: var(--text); }
+/* Header: Build | Scan as one connected strip. */
+.topbar .chips { flex: 0 1 12rem; min-width: 0; margin: 0; }
+.topbar .chip { padding: .4rem .5rem; }
+.chip[aria-current="page"] { background: var(--accent-strong); color: var(--text); border-color: var(--border); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 
 main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
 .layout-2 { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }

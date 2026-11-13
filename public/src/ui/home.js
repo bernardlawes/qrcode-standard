@@ -1,5 +1,5 @@
-// Home page: the user's saved codes (My Card, My WiFi, My Text, My URL) and
-// This App, as collapsed rows. Opening one closes the others; Clear removes
+// Home page: the Wallet of saved codes (Card, WiFi, Text, URL) and App,
+// as collapsed rows. Opening one closes the others; Clear removes
 // the saved codes from this device.
 import './shell.js';
 import { el, $, replace } from './dom.js';
@@ -55,8 +55,8 @@ function render() {
     SLOTS.map(({ type, label }) => codeRow(type, label, () => (codes[type]
       ? qrFrame(codes[type].payload, codes[type].ecc, label)
       : el('p', { class: 'code-note' }, 'Not set yet. ', el('a', { href: `/generate?type=${type}`, text: 'Build one' }))))),
-    codeRow('app', 'This App', () => [
-      qrFrame(PROMO_URL, 'M', 'This App'),
+    codeRow('app', 'App', () => [
+      qrFrame(PROMO_URL, 'M', 'App'),
       el('p', { class: 'code-note', text: new URL(PROMO_URL).host }),
     ]));
 }
@@ -64,7 +64,7 @@ function render() {
 clearBtn.addEventListener('click', async () => {
   if (!await confirmDialog({
     title: 'Clear saved codes?',
-    body: [el('p', { text: 'This removes My Card, My WiFi, My Text and My URL from this device. This App stays.' })],
+    body: [el('p', { text: 'This removes Card, WiFi, Text and URL from this device. App stays.' })],
     confirm: 'Clear',
   })) return;
   clearCodes();
