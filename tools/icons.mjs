@@ -1,8 +1,10 @@
-// Draws the app icon (QR corner squares around the S | M mark) and writes every
-// icon file from that one definition, with no dependencies.
+// Draws the app icon from the logo (docs/brand/logo-source.svg, drawn in
+// Inkscape: three QR corner squares and the S | M mark in the fourth corner) and
+// writes every icon file from it, with no dependencies.
 //   node tools/icons.mjs
+// To change the logo, edit that SVG and run this again.
 // Writes public/icons/*. The same drawing as the full app's icon.
-import { writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { deflateSync } from 'node:zlib';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,123 +12,140 @@ import { THEME_COLOR } from '../public/src/config.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const iconsDir = join(root, 'public', 'icons');
+const brandDir = join(root, 'docs', 'brand');
+const SOURCE = join(brandDir, 'logo-source.svg');
 
-// ---- Geometry: a 720-unit content box (20 modules of 36), centred in 1024. ----
+// ---- Reading the source SVG into polygons (one colour: the logo's dark parts). ----
+// Supported: <path d> with M L H V C Z (absolute or relative), inside <g transform="translate(x,y)">.
+// A path filled white with a stroke is a ring (the stroke only); any other path is filled,
+// grown by half its stroke width when it has a stroke. Strokes are drawn by scaling the
+// shape about its centre, exact on straight sides, which is all the logo uses.
 
-/** Rounded rectangle, clockwise, corner radii [top-left, top-right, bottom-right, bottom-left]. */
-const rr = (x, y, w, h, [tl, tr, br, bl]) =>
-  `M${x + tl},${y}H${x + w - tr}` + (tr ? `A${tr},${tr} 0 0 1 ${x + w},${y + tr}` : '') +
-  `V${y + h - br}` + (br ? `A${br},${br} 0 0 1 ${x + w - br},${y + h}` : '') +
-  `H${x + bl}` + (bl ? `A${bl},${bl} 0 0 1 ${x},${y + h - bl}` : '') +
-  `V${y + tl}` + (tl ? `A${tl},${tl} 0 0 1 ${x + tl},${y}` : '') + 'Z';
-
-/** Rounded rectangle, counter-clockwise: a hole under the non-zero rule. */
-const hole = (x, y, w, h, r) =>
-  `M${x + r},${y}A${r},${r} 0 0 0 ${x},${y + r}V${y + h - r}A${r},${r} 0 0 0 ${x + r},${y + h}` +
-  `H${x + w - r}A${r},${r} 0 0 0 ${x + w},${y + h - r}V${y + r}A${r},${r} 0 0 0 ${x + w - r},${y}Z`;
-
-// Corner squares: kept small and thin so they frame the mark instead of crowding it.
-const F = 196, RING = 21, GAP = 26, CORE = F - 2 * RING - 2 * GAP;
-const finder = (x, y) => [
-  rr(x, y, F, F, [25, 25, 25, 25]) + hole(x + RING, y + RING, F - 2 * RING, F - 2 * RING, 14),
-  rr(x + RING + GAP, y + RING + GAP, CORE, CORE, [17, 17, 17, 17]),
-];
-
-/** The logo's paths in content units. `bold` thickens the mark for small sizes. */
-function logoPaths(bold = 0) {
-  const b = bold;
-  const p = [...finder(0, 0), ...finder(720 - F, 0), ...finder(0, 720 - F)];
-  // S: three bars, alternate corners rounded with radius = bar height.
-  const sh = 36 + b, sx = 180, sw = 146;
-  const sy = [286, 339, 392].map((y) => y - b / 2);
-  p.push(rr(sx, sy[0], sw, sh, [sh, 0, sh, 0]), rr(sx, sy[1], sw, sh, [0, sh, 0, sh]), rr(sx, sy[2], sw, sh, [sh, 0, sh, 0]));
-  // Blade: the top ends in a point at the right, the bottom in a point at the left.
-  const x0 = 344 - b / 2, x1 = 388 + b / 2, yt = 200, yb = 580, c = 78;
-  p.push(`M${x1},${yt}V${yb - c}C${x1},${yb - c * 0.35} ${x1 - (x1 - x0) * 0.55},${yb - 6} ${x0},${yb}` +
-    `V${yt + c}C${x0},${yt + c * 0.35} ${x0 + (x1 - x0) * 0.55},${yt + 6} ${x1},${yt}Z`);
-  // M: four bars; the left pair round top-left and bottom-right, the right pair mirrored.
-  const mw = 32 + b, gap = 14 - b / 3;
-  const mx = [0, 1, 2, 3].map((i) => 408 + i * (mw + gap));
-  const outer = [290, 428], inner = [272, 376];
-  p.push(rr(mx[0], outer[0], mw, outer[1] - outer[0], [mw, 0, mw, 0]));
-  p.push(rr(mx[1], inner[0], mw, inner[1] - inner[0], [mw, 0, mw, 0]));
-  p.push(rr(mx[2], inner[0], mw, inner[1] - inner[0], [0, mw, 0, mw]));
-  p.push(rr(mx[3], outer[0], mw, outer[1] - outer[0], [0, mw, 0, mw]));
-  // QR-like blocks, K thick, their outer edges on the content edge.
-  const K = 28, blk = (x, y, w, h) => rr(x, y, w, h, [8, 8, 8, 8]);
-  p.push(blk(720 - 3 * K, 300, 3 * K, K), blk(720 - K, 300, K, 2 * K + 6));            // ¬ on the right
-  p.push(blk(304, 720 - 2 * K - 6, K, 2 * K + 6), blk(304, 720 - K, 2.8 * K, K));      // L at the bottom
-  p.push(blk(520, 720 - 2 * K, 1.9 * K, 2 * K), blk(516 + 1.9 * K, 720 - 3.6 * K, 1.9 * K, 1.8 * K)); // steps
-  return p;
-}
-
-/**
- * @param {{ fg: string, bg?: string|null, scale?: number, radius?: number, bold?: number }} o
- *   scale: content size as a fraction of 720/1024; radius: background corner radius in 1024 units.
- */
-function svg({ fg, bg = null, scale = 1, radius = 0, bold = 0 }) {
-  const off = (1024 - 720 * scale) / 2;
-  const back = bg ? `<rect width="1024" height="1024" rx="${radius}" fill="${bg}"/>` : '';
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">${back}` +
-    `<g transform="translate(${off} ${off}) scale(${scale})" fill="${fg}">` +
-    logoPaths(bold).map((d) => `<path d="${d}"/>`).join('') + '</g></svg>\n';
-}
-
-// ---- Rasteriser: flatten the paths to polygons, fill with the non-zero rule, 4×4 samples. ----
-
-/** Parse the path commands used above (M H V A C Z, absolute) into closed polygons. */
-function flatten(d, map) {
+/** Path data → polygons (curves flattened). */
+function parsePath(d, tx, ty) {
+  const toks = d.match(/[a-zA-Z]|-?(?:\d+\.?\d*|\.\d+)(?:e-?\d+)?/g);
   const polys = [];
-  let poly = [], x = 0, y = 0;
-  const tokens = d.match(/[MHVACZ]|-?[\d.]+/g);
-  let i = 0;
-  const num = () => Number(tokens[i++]);
-  const add = (px, py) => { x = px; y = py; poly.push(map(px, py)); };
-  while (i < tokens.length) {
-    const cmd = tokens[i++];
-    if (cmd === 'M') { if (poly.length) polys.push(poly); poly = []; add(num(), num()); }
-    else if (cmd === 'H') add(num(), y);
-    else if (cmd === 'V') add(x, num());
-    else if (cmd === 'Z') { polys.push(poly); poly = []; }
-    else if (cmd === 'C') {
-      const [ax, ay, bx, by, ex, ey] = [num(), num(), num(), num(), num(), num()];
-      const sx = x, sy = y;
-      for (let k = 1; k <= 24; k++) {
-        const t = k / 24, u = 1 - t;
-        add(u * u * u * sx + 3 * u * u * t * ax + 3 * u * t * t * bx + t * t * t * ex,
-          u * u * u * sy + 3 * u * u * t * ay + 3 * u * t * t * by + t * t * t * ey);
+  let poly = [], x = 0, y = 0, sx = 0, sy = 0, cmd = '', i = 0;
+  const n = () => Number(toks[i++]);
+  const add = () => poly.push([x + tx, y + ty]);
+  while (i < toks.length) {
+    if (/[a-zA-Z]/.test(toks[i])) cmd = toks[i++];
+    const rel = cmd === cmd.toLowerCase();
+    switch (cmd.toUpperCase()) {
+      case 'M':
+        if (poly.length) polys.push(poly);
+        poly = [];
+        x = (rel ? x : 0) + n(); y = (rel ? y : 0) + n(); sx = x; sy = y; add();
+        cmd = rel ? 'l' : 'L'; // further pairs are lines
+        break;
+      case 'L': x = (rel ? x : 0) + n(); y = (rel ? y : 0) + n(); add(); break;
+      case 'H': x = (rel ? x : 0) + n(); add(); break;
+      case 'V': y = (rel ? y : 0) + n(); add(); break;
+      case 'C': {
+        const ox = rel ? x : 0, oy = rel ? y : 0;
+        const [ax, ay, bx, by, ex, ey] = [n() + ox, n() + oy, n() + ox, n() + oy, n() + ox, n() + oy];
+        const x0 = x, y0 = y;
+        for (let k = 1; k <= 24; k++) {
+          const t = k / 24, u = 1 - t;
+          x = u * u * u * x0 + 3 * u * u * t * ax + 3 * u * t * t * bx + t * t * t * ex;
+          y = u * u * u * y0 + 3 * u * u * t * ay + 3 * u * t * t * by + t * t * t * ey;
+          add();
+        }
+        break;
       }
-    } else if (cmd === 'A') {
-      const r = num(); num(); num(); const large = num(), sweep = num(); const ex = num(), ey = num();
-      // Centre of a circular arc (SVG implementation notes F.6.5, no rotation).
-      const hx = (x - ex) / 2, hy = (y - ey) / 2, dd = hx * hx + hy * hy;
-      const k = Math.sqrt(Math.max(0, r * r - dd) / dd) * (large !== sweep ? 1 : -1);
-      const cx = k * hy + (x + ex) / 2, cy = -k * hx + (y + ey) / 2;
-      let a0 = Math.atan2(y - cy, x - cx), a1 = Math.atan2(ey - cy, ex - cx);
-      if (sweep && a1 < a0) a1 += 2 * Math.PI;
-      if (!sweep && a1 > a0) a1 -= 2 * Math.PI;
-      for (let s = 1; s <= 16; s++) {
-        const a = a0 + ((a1 - a0) * s) / 16;
-        add(cx + r * Math.cos(a), cy + r * Math.sin(a));
-      }
-      add(ex, ey);
-    } else throw new Error(`Unsupported path command ${cmd}`);
+      case 'Z':
+        if (poly.length) polys.push(poly);
+        poly = [];
+        x = sx; y = sy;
+        break;
+      default: throw new Error(`logo-source.svg: path command "${cmd}" isn't supported; use straight lines or cubic curves`);
+    }
   }
   if (poly.length) polys.push(poly);
   return polys;
 }
 
-/** Coverage (0–1) of the logo for each pixel of a size×size image. */
-function coverage(size, { scale = 1, bold = 0 }) {
-  const unit = size / 1024, off = (1024 - 720 * scale) / 2;
-  const map = (px, py) => [(off + px * scale) * unit, (off + py * scale) * unit];
-  const edges = [];
-  for (const d of logoPaths(bold)) {
-    for (const poly of flatten(d, map)) {
-      for (let j = 0; j < poly.length; j++) {
-        const [ax, ay] = poly[j], [bx, by] = poly[(j + 1) % poly.length];
-        if (ay !== by) edges.push([ax, ay, bx, by]);
+const bbox = (pts) => pts.reduce(([a, b, c, d], [x, y]) => [Math.min(a, x), Math.min(b, y), Math.max(c, x), Math.max(d, y)], [Infinity, Infinity, -Infinity, -Infinity]);
+
+/** The polygon grown (by > 0) or shrunk (by < 0) by `by` on every side, scaled about its centre. */
+function grow(poly, by) {
+  const [x0, y0, x1, y1] = bbox(poly);
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const kx = (x1 - x0 + 2 * by) / (x1 - x0), ky = (y1 - y0 + 2 * by) / (y1 - y0);
+  return poly.map(([x, y]) => [cx + (x - cx) * kx, cy + (y - cy) * ky]);
+}
+
+/** Signed area: the sign gives the winding. */
+const area = (poly) => poly.reduce((s, [x, y], i) => { const [u, v] = poly[(i + 1) % poly.length]; return s + x * v - u * y; }, 0) / 2;
+const wound = (poly, positive) => ((area(poly) > 0) === positive ? poly : [...poly].reverse());
+
+/** The logo as polygons in source units: solid ones wound one way, holes the other (non-zero rule). */
+async function readLogo() {
+  const src = await readFile(SOURCE, 'utf8');
+  const polys = [];
+  let tx = 0, ty = 0;
+  const re = /<g\b[^>]*>|<\/g>|<path\b[^>]*>/g;
+  for (const [tag] of src.matchAll(re)) {
+    if (tag === '</g>') { tx = 0; ty = 0; continue; }
+    if (tag.startsWith('<g')) {
+      const t = /transform="translate\(\s*(-?[\d.]+)[ ,]+(-?[\d.]+)\s*\)"/.exec(tag);
+      if (/transform=/.test(tag) && !t) throw new Error('logo-source.svg: only translate() transforms on groups are supported');
+      tx = t ? Number(t[1]) : 0; ty = t ? Number(t[2]) : 0;
+      continue;
+    }
+    const d = /\sd="([^"]+)"/.exec(tag)?.[1];
+    if (!d) continue;
+    if (/\stransform=/.test(tag)) throw new Error('logo-source.svg: apply path transforms in Inkscape first');
+    const style = /\sstyle="([^"]*)"/.exec(tag)?.[1] ?? '';
+    const prop = (name) => new RegExp(`(?:^|;)\\s*${name}\\s*:\\s*([^;]+)`).exec(style)?.[1].trim();
+    const white = /^(#fff(fff)?|white)$/i.test(prop('fill') ?? '');
+    const stroked = prop('stroke') && prop('stroke') !== 'none';
+    const width = stroked ? Number(prop('stroke-width') ?? 1) : 0;
+    for (const poly of parsePath(d, tx, ty)) {
+      if (white && stroked) { // a ring: the stroke alone
+        polys.push(wound(grow(poly, width / 2), true), wound(grow(poly, -width / 2), false));
+      } else if (!white) {
+        polys.push(wound(grow(poly, width / 2), true));
       }
+    }
+  }
+  if (!polys.length) throw new Error('logo-source.svg: no paths found');
+  return polys;
+}
+
+const LOGO = await readLogo();
+const [LX0, LY0, LX1, LY1] = bbox(LOGO.flat());
+const LOGO_SIZE = Math.max(LX1 - LX0, LY1 - LY0);
+
+/** Polygons placed in the 1024 frame: the logo's bounding box, centred, `720 × scale` across. */
+function placed(scale = 1) {
+  const k = (720 * scale) / LOGO_SIZE;
+  const ox = 512 - ((LX1 - LX0) * k) / 2, oy = 512 - ((LY1 - LY0) * k) / 2;
+  return LOGO.map((poly) => poly.map(([x, y]) => [ox + (x - LX0) * k, oy + (y - LY0) * k]));
+}
+
+const fmt = (v) => Number(v.toFixed(2));
+
+/**
+ * @param {{ fg: string, bg?: string|null, scale?: number, radius?: number }} o
+ *   scale: content size as a fraction of 720/1024; radius: background corner radius in 1024 units.
+ */
+function svg({ fg, bg = null, scale = 1, radius = 0 }) {
+  const back = bg ? `<rect width="1024" height="1024" rx="${radius}" fill="${bg}"/>` : '';
+  const d = placed(scale).map((poly) => `M${poly.map(([x, y]) => `${fmt(x)} ${fmt(y)}`).join('L')}Z`).join('');
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">${back}<path fill="${fg}" d="${d}"/></svg>\n`;
+}
+
+// ---- Rasteriser: fill the polygons with the non-zero rule, 4×4 samples. ----
+
+/** Coverage (0–1) of the logo for each pixel of a size×size image. */
+function coverage(size, { scale = 1 }) {
+  const unit = size / 1024;
+  const edges = [];
+  for (const poly of placed(scale)) {
+    for (let j = 0; j < poly.length; j++) {
+      const [ax, ay] = poly[j].map((v) => v * unit), [bx, by] = poly[(j + 1) % poly.length].map((v) => v * unit);
+      if (ay !== by) edges.push([ax, ay, bx, by]);
     }
   }
   const S = 4, cov = new Float32Array(size * size);
@@ -153,8 +172,8 @@ function coverage(size, { scale = 1, bold = 0 }) {
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 
 /** RGBA PNG: logo `fg` over `bg`, background corners rounded by `radius` (fraction of size), else square. */
-function png(size, { fg, bg, scale = 1, bold = 0, radius = 0 }) {
-  const cov = coverage(size, { scale, bold });
+function png(size, { fg, bg, scale = 1, radius = 0 }) {
+  const cov = coverage(size, { scale });
   const F = hex(fg), B = hex(bg), r = radius * size;
   const raw = Buffer.alloc(size * (size * 4 + 1));
   for (let y = 0; y < size; y++) {
@@ -201,12 +220,11 @@ function crc32(buf) {
 const WHITE = '#ffffff';
 const tile = { fg: WHITE, bg: THEME_COLOR };
 const MASKABLE_SCALE = 0.78; // everything inside the 80% safe circle
-const SMALL_BOLD = 10;       // extra mark thickness for icons shown at 64 px or less
 
 await mkdir(iconsDir, { recursive: true });
 await writeFile(join(iconsDir, 'icon-192.png'), png(192, { ...tile, radius: 0.2 }));
 await writeFile(join(iconsDir, 'icon-512.png'), png(512, { ...tile, radius: 0.2 }));
 await writeFile(join(iconsDir, 'maskable-512.png'), png(512, { ...tile, scale: MASKABLE_SCALE }));
 await writeFile(join(iconsDir, 'apple-touch-icon.png'), png(180, tile)); // iOS rounds it itself
-await writeFile(join(iconsDir, 'icon.svg'), svg({ ...tile, radius: 205, bold: SMALL_BOLD })); // browser tabs
+await writeFile(join(iconsDir, 'icon.svg'), svg({ ...tile, radius: 205 })); // browser tabs
 console.log('Wrote icons to', iconsDir);
