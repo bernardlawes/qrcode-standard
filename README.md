@@ -75,3 +75,5 @@ Live at **https://lite.sovereignqr.com** (`ORIGIN` in `config.js`), from the Clo
 | `public/src/ui/` | Pages, forms and result renderers |
 | `tools/` | Vendoring, sync, icons, codes CLI, dev server, local admin page |
 | `test/` | `node --test` suites |
+
+See [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md) for conventions: the type-registry pattern, security rules and how to upgrade libraries.
